@@ -145,8 +145,11 @@ This is a Winsock work around to be able to bind() to more than 3976 ports
 
 #ifdef HL_WINDOWS_APP
 
-static HTmutex  portlock; /* In memory of my step-father, Don Portlock,
-who passed away Jan 12, 2001 - Phil */
+/* Changed according to Niko Ritari's fixes. See
+ * http://koti.mbnet.fi/outgun/documentation/compiler_install.html
+ * for details */
+/*
+static HTmutex  portlock; // In memory of my step-father, Don Portlock, who passed away Jan 12, 2001 - Phil
 
 static volatile NLushort nextport = 1024;
 
@@ -158,7 +161,7 @@ static NLushort sock_getNextPort(void)
     temp = (NLlong)nextport;
     if(++temp > 65535)
     {
-        /* skip the well known ports */
+        // skip the well known ports
         temp = 1024;
     }
     nextport = (NLushort)temp;
@@ -169,17 +172,17 @@ static NLushort sock_getNextPort(void)
 static NLint sock_bind(SOCKET socket, const struct sockaddr *a, int len)
 {
     struct sockaddr_in  *addr = (struct sockaddr_in *)a;
-    int                 ntries = 500; /* this is to prevent an infinite loop */
+    int                 ntries = 500; // this is to prevent an infinite loop
     NLboolean           found = NL_FALSE;
     
-    /* check to see if the port is already specified */
+    // check to see if the port is already specified
     if(addr->sin_port != 0)
     {
-        /* do the normal bind */
+        // do the normal bind
         return bind(socket, a, len);
     }
     
-    /* let's find our own port number */
+    // let's find our own port number
     while(ntries-- > 0)
     {
         addr->sin_port = htons(sock_getNextPort());
@@ -193,11 +196,13 @@ static NLint sock_bind(SOCKET socket, const struct sockaddr *a, int len)
     {
         return 0;
     }
-    /* could not find a port, restore the port number back to 0 */
+    // could not find a port, restore the port number back to 0
     addr->sin_port = 0;
-    /*  return error */
+    //  return error
     return SOCKET_ERROR;
-}
+} */
+
+#define sock_bind bind
 
 static int sock_connect(SOCKET socket, const struct sockaddr* a, int len )
 {
@@ -551,11 +556,12 @@ NLboolean sock_Init(void)
     {
         return NL_FALSE;
     }
-    if(htMutexInit(&portlock) != 0)
+    /* commented by Niko Ritari; not needed with the sock_bind replacement:
+    if(nlMutexInit(&portlock) == NL_FALSE)
     {
-        nlSetError(NL_SYSTEM_ERROR);
         return NL_FALSE;
     }
+    * end of modification by Niko Ritari */
 #endif
     if(htMutexInit(&rpMutex) != 0)
     {
@@ -580,7 +586,7 @@ void sock_Shutdown(void)
 {
 #ifdef HL_WINDOWS_APP
     (void)WSACleanup();
-    (void)htMutexDestroy(&portlock);
+    // (void)htMutexDestroy(&portlock);
     (void)htMutexDestroy(&rpMutex);
     (void)nlGroupDestroy(rpGroup);
     rpGroup = NL_INVALID;
