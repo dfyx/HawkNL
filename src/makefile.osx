@@ -13,7 +13,7 @@ OUTPUT = lib$(LIBNAME).$(VERSION).dylib
 STATIC = libNL.a
 OPTFLAGS = -funroll-all-loops -ffast-math -fomit-frame-pointer -O2 -D_REENTRANT -DMACOSX
 CFLAGS = -Wall -fPIC $(INCLUDE) $(OPTFLAGS)
-LIBFLAGS = -dylib -r -lpthread -Wl,-x
+LIBFLAGS = -dynamiclib -r -lpthread -Wl,-x
 OBJECTS = crc.o errorstr.o nl.o sock.o group.o loopback.o err.o hthread.o htmutex.o htcondition.o nltime.o
 
 all: $(OBJECTS)
@@ -63,9 +63,9 @@ uninstall:
 	@echo "* wont work                                     *"
 	@echo "*************************************************"
 	rm -f $(LIBDIR)/$(OUTPUT)
-	rm -f $(LIBDIR)/lib$(LIBNAME).so.$(MAJOR_VERSION).$(MINOR_VERSION)
-	rm -f $(LIBDIR)/lib$(LIBNAME).so.$(MAJOR_VERSION)
-	rm -f $(LIBDIR)/lib$(LIBNAME).so
+	rm -f $(LIBDIR)/lib$(LIBNAME).$(MAJOR_VERSION).$(MINOR_VERSION).dylib
+	rm -f $(LIBDIR)/lib$(LIBNAME).$(MAJOR_VERSION).dylib
+	rm -f $(LIBDIR)/lib$(LIBNAME).dylib
 	rm -f $(LIBDIR)/$(STATIC)
 	rm -f $(INCDIR)/nl.h
 	@echo ""
