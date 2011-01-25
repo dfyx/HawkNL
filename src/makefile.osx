@@ -12,13 +12,13 @@ LIBNAME = NL
 OUTPUT = lib$(LIBNAME).$(VERSION).dylib
 STATIC = libNL.a
 OPTFLAGS = -funroll-all-loops -ffast-math -fomit-frame-pointer -O2 -D_REENTRANT -DMACOSX
-CFLAGS = -Wall -fPIC $(INCLUDE) $(OPTFLAGS)
-LIBFLAGS = -dynamiclib -r -lpthread -Wl,-x
+CFLAGS = -Wall -fPIC $(INCLUDE) $(OPTFLAGS) -arch i386 -arch x86_64
+LIBFLAGS = -dynamiclib -r -lpthread -Wl,-x -arch i386 -arch x86_64
 OBJECTS = crc.o errorstr.o nl.o sock.o group.o loopback.o err.o hthread.o htmutex.o htcondition.o nltime.o
 
 all: $(OBJECTS)
 	$(CC) -o $(OUTPUT) $(OBJECTS) $(LIBFLAGS) $(CFLAGS)
-	$(AR) $(STATIC) $(OBJECTS)
+	#$(AR) $(STATIC) $(OBJECTS)
 	$(RANLIB) $(STATIC)
 
 nl.o : nlinternal.h nl.c

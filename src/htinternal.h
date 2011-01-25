@@ -27,7 +27,7 @@
 
 /* for malloc and free */
 #include <stdlib.h>
-#ifndef MACOSX
+#ifndef __APPLE__
 #include <malloc.h>
 #endif
 #ifdef HL_WINDOWS_APP
